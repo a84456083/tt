@@ -1,0 +1,397 @@
+<html>
+
+<head>
+<meta charset='utf-8'>
+<script src="plugin/check_attendance/js/jquery.min.js"></script>
+<script src="plugin/check_attendance/js/jquery.handsontable.js"></script>
+<link rel="stylesheet" media="screen" href="plugin/check_attendance/css/jquery.handsontable.css">
+
+
+	<?php                                                                             //根据uid权限限制
+	if(uid()==6){                                                           //雷静： 6    我：21   第一个为雷静  第2个为测试阶段使用  
+	if($_GET['query']==1){
+	$edit="false";
+	$edit2="true";
+	}
+	else{
+	$edit="true";
+	$edit2="false";
+	}
+	}
+	else{ 
+	$edit="false";
+	$edit2="true";
+	}
+
+	if($edit=="true") {$left=-150;$timeleft=0;}
+	else {$left=-150;$timeleft=210;}
+	
+	?>
+	
+	
+	<style>
+	#bar{margin-left:370px;margin-bottom:20px}
+	#title{font-size:30px;}
+	#votation{margin-left:100px;font-size:15px;}
+	#explain{margin-left:0px;font-size:15px; font-weight:bold; 
+
+	}
+	#buttons{margin-left:120px;}
+	#time{margin-left:<?=$timeleft?>px;}
+	#button{margin-left:100px;}
+	strong{font-size:16px;}
+
+
+    table{
+	font-size:13px;
+    empty-cells:show; 
+    border-collapse: collapse;
+    margin:0 auto;
+    }
+    td{
+    height:25px;
+    }
+	
+
+	.title { background: #FFF; border: 1px solid #9DB3C5; padding: 0px; width:100%; }
+    .title th, .title td { border: 1px solid #CAD9EA; padding: 0px; font-size:13px;}
+
+
+table.t1{
+    border:1px solid #cad9ea;
+    color:#666;
+}
+
+
+table.t1 th {
+    background-image: url(th_bg1.gif);
+    background-repeat::repeat-x;
+    height:30px;
+}
+table.t1 td,table.t1 th{
+    border:1px solid #cad9ea;
+    padding:0 1em 0;
+}
+.a1{
+    background-color:#f5fafe;
+}
+.a2{
+    background-color:#FFFAF0;
+}
+
+th{
+    background-color:#FFFFF0;
+}
+#myModal{width:750px}
+
+.t1 tr:hover{
+background-color:#EDEDED;
+}
+
+
+footer{display:none;}
+
+#example1{
+margin:0 -220px 0 -210px;
+}
+	</style>
+
+
+	
+	          <style data-jsfiddle="common">
+            .handsontable .currentRow {
+              background-color: #FFFFE0;
+            }
+
+            .handsontable .currentCol {
+              background-color: #FFFFE0;
+            }
+          </style>
+	
+</head>
+
+<body>
+
+
+
+ <div id='bar'> 
+		 <span id='title'><?=$data['time_code']?>---考勤表</span>
+		 </div>
+		
+		 
+         <div>
+		 <strong id='time'>时间:</strong>
+		 <select id="sel">
+         <?php
+         if($edit=='true') $i=1;
+		 else $i=1;
+         for(;$i<count($data['time'] );$i++){
+         ?>
+         <option value="<?php echo $data['time'][$i]['time_code'];?>"<?php if($data['time'][$i]['time_code']==$data['time_code']){echo 'selected';}?> ><?php echo $data['time'][$i]['time_code'];?></option>
+
+         <?php
+         }
+         ?>
+         </select>
+		 
+		 
+
+		 
+		 <span id="buttons">
+	     <button id="built" class="btn btn-info">导出</button>
+		 <button id="query" class="btn btn-info">查询</button>
+		 <button id="create" class="btn btn-info">初始化</button>
+		 <!-- <button id="change"  class="fm-button ui-state-default ui-corner-all ui-state-hover">转换</button> -->
+	     </span>
+		 
+		 
+		 <span id="button">
+		<a class="btn btn-info" href="#myModal"  data-toggle="modal" >查询请假统计结果</a>
+		 </span>
+		 
+		 <span id="votation">
+		 <strong>正常假期:</strong>
+		 <input type='text' maxlength="2"   style="width:44px;height:30px;"  id='day'/>
+		 <button id="submit" class="btn btn-info">确定</button>
+		 </span>
+		 </div>
+		 
+		 <div id="explain">考勤符号:&nbsp; &nbsp; 病假 B&nbsp; &nbsp; &nbsp;   事假 S &nbsp; &nbsp; &nbsp;  年假 D&nbsp; &nbsp; &nbsp;
+		 外勤 W&nbsp; &nbsp; &nbsp;   迟到 CD&nbsp; &nbsp; &nbsp;   婚假 H &nbsp; &nbsp; &nbsp;  计划生育假 J&nbsp; &nbsp; &nbsp;   丧假 SJ&nbsp; &nbsp; &nbsp;   正常假期 -
+		 &nbsp; &nbsp;未带卡 WD&nbsp; &nbsp; &nbsp;   <span style="margin-left:80px">旷工 K&nbsp; &nbsp; &nbsp;    补休 BX</span>
+		 </div>
+
+
+        <div id="example1" style="overflow: auto"></div>
+		
+  
+          <script>
+            var $container = $("#example1");
+
+            var $parent = $container.parent();
+            var autosaveNotification;
+			if(<?=$edit?>==true)
+			var edit=false;
+			else
+			var edit=true;
+			
+			
+
+
+           function negativeValueRenderer(instance, td, row, col, prop, value, cellProperties) {
+               Handsontable.TextCell.renderer.apply(this, arguments);
+               if (value === '-') {
+               td.style.background = '#EEE';
+               }
+               else if(col!='0'&&col!='1'&&value != ''){
+               td.style.color = 'red';
+                } 
+
+            }
+			
+			
+             $container.handsontable({
+	
+              startRows: 2,
+              startCols: 3,
+			  colWidths: [60][68],
+			  <?php if($edit=="false"){?>
+			  cells: function (row, col, prop) {
+              var cellProperties = {};
+              cellProperties.renderer = negativeValueRenderer; //uses lookup map
+              return cellProperties;
+              },
+              <?php } ?>
+              rowHeaders: false,
+              colHeaders: true,
+              minSpareRows: 0,
+			  currentRowClassName: 'currentRow',
+              currentColClassName: 'currentCol',
+			  height:400,
+			  stretchH: 'last',
+              contextMenu: false,
+			  colHeaders:['工号','姓名', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17'
+				           , '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31',' ','年假','病假','事假','旷工','迟到','其他','请假(考核周期内)'],
+	 columns: [
+     {
+        data: 3,
+        readOnly:true
+      }
+	 ,
+	  {
+        data: 4,
+        readOnly:true
+      }
+	  ,
+	  
+	<?php 
+	for($i=5;$i<=35;$i++){
+	?>
+	   {
+        data: <?=$i?>,
+		width:38,
+		type:'autocomplete',
+      source: ["","-", "S", "B", "D", "W", "CD", 'SJ','H','J','WD','BX','K'],
+      strict: true,
+      options: {
+        items: 13 //`options` overrides `defaults` defined in bootstrap typeahead
+      },
+      readOnly: edit
+	  }
+	  
+	<?php
+	if($i!=35)
+	echo ',';
+	}
+	?> 
+    ],			   
+             //自动保存
+              afterChange: function (change, source) {
+                if (source === 'loadData') {
+                  return; //don't save this change
+                }
+                
+                  clearTimeout(autosaveNotification);
+                  $.ajax({
+                    url: "?c=plugin&a=attendance_save",
+                    dataType: "text",
+                    type: "POST",
+                    data: {"data": handsontable.getDataAtRow (change[0][0])}, //contains changed cells' data
+                  });
+                
+              }
+            });
+			
+			//自动加载
+            var handsontable = $container.data('handsontable');
+			   $.ajax({
+                url: "?c=plugin&a=data_attendance_new&time_code="+<?=$data['time_code']?>,
+                dataType: 'json',
+                type: 'GET',
+                success: function (res) {
+                  handsontable.loadData(res.data);
+       
+                }
+              });
+	        //表格添加CSS
+			$('#example1 table').addClass('table');		
+			$('#example1 table').addClass('table-hover');
+			$('#example1 table').addClass('table-bordered');
+			
+          </script>
+
+		
+		
+		<!-- 统计结果显示框 -->
+		<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">  
+	    <div class="modal-header">  
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> 
+	    <h3 id="myModalLabel"><?=$data['time_code']?>---请假统计结果</h3>  </div>  <div class="modal-body">   
+	    <p>
+		<table border="1" class="t1">
+		
+		<tr class="title">
+		<th width="40px">姓名</th>
+		<th>年假(天)</th>
+		<th>病假(天)</th>
+		<th>事假(天)</th>
+		<th>旷工(天)</th>
+		<th>迟到(次)</th>
+		<th>早退(次)</th>
+		<th>其它(天)</th>
+		<th width="90px">考核期内请假(天)</th>
+		</tr>
+		
+
+
+	   <?php $c=-1; foreach($countData as $count):
+	   $c++; 
+	   if($c%2==0){?>
+ 		<tr class="a<?=($c%4/2+1)?>">
+		<td>
+		<?php 
+		echo explode('(',$count['name'])[0];
+		?>
+		</td>
+		<td><?=$count['D']?></td>
+		<td><?=$count['B']?></td>
+		<td><?=$count['S']?></td>
+		<td><?=$count['K']?></td>
+		<td><?=$count['CD']?></td>
+		<td>0</td>
+		<td><?=$count['O']?></td>
+		<td><?=$count['TO']?></td>
+		</tr>		
+       <?php } endforeach ?>
+		</table>
+
+		</p> 
+		</div> 
+		<div class="modal-footer">   
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>   
+	    </div>
+	    </div>
+		
+		
+ 
+   <script type="text/javascript">     
+                                                                                        //点击,状态变换监听器
+																						
+
+																						
+         if(!<?=$edit?>){
+		 $('#buttons').css('display','none');
+		 $('#votation').css('display','none');
+		 }
+		 else{
+		 $('#button').css('display','none');
+		 }
+		 
+   
+	    $('#built').click(function(){
+		htmlobj=$.ajax({url:"?c=plugin&a=attendance_out&time_code="+<?=$data['time_code']?>,async:false});
+        alert(htmlobj.responseText);
+		window.open(<?=$data['time_code']?>+"考勤统计表.xlsx");
+		});
+		
+	    $('#submit').click(function(){
+		if($('#day').val()>=1&&$('#day').val()<=31){
+		htmlobj=$.ajax({url:"?c=plugin&a=change_vacation&time_code="+<?=$data['time_code']?>+"&day="+$('#day').val(),async:false});
+        alert(htmlobj.responseText);
+		window.top.location.reload();
+		}
+		else alert('请输入1~31数字');
+		});
+		
+		$('#query').click(function(){
+		window.location.href="?c=plugin&a=check_attendance_new&query=1&time_code="+<?=$data['time_code']?>;
+		});
+		
+		$('#sel').change(function(){
+		window.location.href="?c=plugin&a=check_attendance_new&time_code="+$("#sel option:selected").val()+"&query="+ <?php if(isset($_GET['query'])) echo $_GET['query']; else echo 0; ?>;
+		}
+		);
+		
+		$('#create').click(function(){
+		htmlobj=$.ajax({url:"?c=plugin&a=attendance_create&time_code="+<?=$data['time_code']?>,async:false});
+        alert(htmlobj.responseText);
+		window.top.location.reload();
+		});
+		
+		
+		
+	    $('#change').click(function(){
+		if (confirm("是否确认转换，转换后只存在原始类型"))  {  
+		htmlobj=$.ajax({url:"?c=plugin&a=change_new",async:false});
+        alert(htmlobj.responseText);
+		window.top.location.reload();
+         }  else  { 
+     
+        };
+		});
+		$('.htAutocomplete').addClass('border');
+	</script>   
+
+</body>
+
+</html>

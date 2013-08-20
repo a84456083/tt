@@ -1,0 +1,11 @@
+<form method="POST" action="?c=plugin&a=board_todo_insert" onsubmit="return board_batch_add_todo(<?php echo intval(v('list_id'))?>)" id="board_batch_add_todo_form">
+	<textarea placeholder="每行一个TODO，用@点名指派给人，未指定的给自己,如：更新TeamToy官网demo @Easy" id="todo_batch_add_input" name="todos" class="span5"></textarea><br />
+	<input type="hidden" name="board_id" value="<?php echo intval(v('board_id'))?>" />
+	<input type="hidden" name="list_id" value="<?php echo intval(v('list_id'))?>" />
+	<input class="button" type="submit" value="添加" />
+	<br />
+	<br />
+	<?php 
+	if('private'==v('visible')) echo '<span class="help-inline">这个是一个私有看板，默认添加的TODO为私有todo，如果在TODO的末尾加上井号"#"也会作为公有TODO发布</span>';		
+	?>
+</form>

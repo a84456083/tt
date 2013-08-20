@@ -1,0 +1,56 @@
+<div class="row-fluid">	
+<form class="form-horizontal" action="?c=plugin&a=mail_queue_save" method="post" id="mqueue_form">
+	<div class="control-group">
+		<label class="control-label" for="mqueue_server"><?=__('PL_MAIL_QUEUE_SMTP_SERVER')?></label>
+		<div class="controls">
+			<input type="text" class="input" id="mqueue_server" name="mqueue_server" value="<?=$mqueue_server?>">
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="mqueue_port"><?=__('PL_MAIL_QUEUE_SMTP_PORT')?></label>
+		<div class="controls">
+			<input type="text" class="input" id="mqueue_port" name="mqueue_port" value="<?=$mqueue_port?>">
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="mqueue_username"><?=__('PL_MAIL_QUEUE_SMTP_USERNAME')?></label>
+		<div class="controls">
+			<input type="text" class="input" id="mqueue_username" name="mqueue_username" value="<?=$mqueue_username?>">
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="mqueue_password"><?=__('PL_MAIL_QUEUE_SMTP_PASSWORD')?></label>
+		<div class="controls">
+			<input type="password" class="input" id="mqueue_password" name="mqueue_password" value="<?=$mqueue_password?>">
+		</div>
+	</div>
+
+	<div class="control-group">
+    <div class="controls">
+      <label class="checkbox">
+        <input type="checkbox" name="mqueue_not_online" value="1" <?= intval($mqueue_not_online)==1 ? ' checked ':' '?>> <?=__('PL_MAIL_QUEUE_SEND_TO_NOT_ONLINE')?>
+      </label>
+    </div>
+  </div>
+
+
+	<div class="control-group">
+    <div class="controls">
+      <label class="checkbox">
+        <input type="checkbox" name="mqueue_on" value="1" <?=intval($mqueue_on)==1?' checked ':''?>> <?=__('PL_MAIL_QUEUE_ACTIVE')?>
+      </label>
+    </div>
+  </div>
+	
+	
+	
+	<div class="form-actions">
+            <a type="button" class="btn btn-primary" href="javascript:send_form_in('mqueue_form');"><?=__('SAVE')?></a>&nbsp;
+            <a type="button" class="btn" href="javascript:mqueue_test();"><?=__('PL_MAIL_QUEUE_SEND_TEST_MAIL')?></a>
+
+</form>
+
+</div>	

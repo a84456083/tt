@@ -1,0 +1,72 @@
+<div class="line"></div>
+<h2 class="side_board">CheckList <span id="check_count"></span>
+<?php if( $data['owner_uid'] == uid() && intval($data['details']['status']) != 3  ): ?>
+ <a class="side_link" title="<?=__('PL_CHECK_LIST_EDIT')?>" id="ck_edit_icon" href="javascript:ck_edit_toggle();"><i class="icon-edit"></i></a> 
+<?php endif; ?>
+</h2>
+
+
+<?php if( isset( $checklists ) && is_array( $checklists )  ): ?>
+<!-- checklist  -->
+<div id="checklist_container">
+<ul id="checklist_list" class="cklist" tid="<?=$data['tid']?>">
+<?php foreach( $checklists as $item ): ?>
+	<?php require( dirname(__FILE__) . DS . 'check_list_item.tpl.html' ); ?>
+<?php endforeach;?>
+</ul>
+</div>
+
+<?php if( $data['owner_uid'] == uid() && intval($data['details']['status']) != 3 ): ?>
+<div id="edit_links">
+
+<?php if( intval(g('TODO_CENTER_MODE'))!= 1 ): ?>
+  <a href="javascript:check_list_tpl_show('<?=$data['tid']?>');void(0);" class="pull-right"><i class="icon-list-alt"></i> <?=__('PL_CHECK_LIST_TEMPLATE')?></a>
+  <?php endif; ?>
+<a class="edit_show" href="javascript:check_list_add();void(0);" id="check_list_add_link"><i class="icon-plus"></i> <?=__('PL_CHECK_LIST_ADD_ITEM')?></a>
+</div>
+ <?php endif; ?>
+
+<script type="text/javascript">
+bind_checklist();
+count_checklist();
+</script>
+
+<!-- /checklist  -->
+
+
+<?php else: ?>
+
+<!-- checklist empty  -->
+
+	<ul id="checklist_list" class="empty cklist" tid="<?=$data['tid']?>"></ul>
+	<?php if( $data['owner_uid'] == uid() && intval($data['details']['status']) != 3 ): ?>
+  <div id="edit_links">
+	<?php if( intval(g('TODO_CENTER_MODE'))!= 1 ): ?>
+  <a href="javascript:check_list_tpl_show('<?=$data['tid']?>');void(0);" class="pull-right"><i class="icon-list-alt"></i> <?=__('PL_CHECK_LIST_TEMPLATE')?></a>
+  <?php endif; ?>
+	<a class="edit_show" href="javascript:check_list_add();void(0);" id="check_list_add_link"><i class="icon-plus"></i> <?=__('PL_CHECK_LIST_ADD_ITEM')?></a>
+	</div>
+  <?php endif; ?>
+
+ <!-- checklist  -->
+ 
+<?php endif; ?>	
+
+
+<div id="check_list_add_box" class="hide">
+<form class="form-inline" action="javascript:check_list_save( <?=$data['tid']?> , $('#checklist_text').val() );void(0);" method="post" id="checklist_form">
+<div class="input-append">
+  <input  id="checklist_text" type="text" value="" class="side_edit" autofocus="autofocus"	>
+  <div class="btn-group left_square">
+	<button class="btn" type="submit" ><?=__('SAVE')?></button>
+    <button class="btn dropdown-toggle" data-toggle="dropdown">
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu short_menu">
+    	<li><a tabindex="-1" href="javascript:$('#check_list_add_box').hide();$('#edit_links').show();"><?=__('CANCEL')?></a></li>
+    </ul>
+  </div>
+</div>	
+</form>	
+</div>
+<div class="line"></div>

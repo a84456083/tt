@@ -1,0 +1,147 @@
+<html>
+
+<head>
+<meta charset='utf-8'>
+<script src="plugin/check_attendance/js/jquery.min.js"></script>
+<script src="plugin/check_attendance/js/jquery.handsontable.js"></script>
+<link rel="stylesheet" media="screen" href="plugin/check_attendance/css/jquery.handsontable.css">
+
+
+<style>
+
+    table{
+	font-size:13px;
+    empty-cells:show; 
+    border-collapse: collapse;
+    margin:0 auto;
+    }
+    td{
+    height:25px;
+    }
+	table.t1{
+    border:1px solid #cad9ea;
+    color:#666;
+}
+
+
+table.t1 th {
+    background-image: url(th_bg1.gif);
+    background-repeat::repeat-x;
+    height:30px;
+}
+table.t1 td,table.t1 th{
+    border:1px solid #cad9ea;
+    padding:0 1em 0;
+}
+.a1{
+    background-color:#f5fafe;
+}
+.a2{
+    background-color:#FFFAF0;
+}
+
+th{
+    background-color:#FFFFF0;
+}
+.center{ margin:50px auto;}
+h1{text-align:center}
+</style>
+
+<script>
+<?php
+if( isset($_GET['success']) ){
+if($_GET['success']==1){
+?>
+alert("操作成功");
+
+<?php
+}
+if($_GET['success']==0){
+?>
+alert("操作失败");
+<?php
+}
+}
+?>
+
+</script>
+
+
+</head>
+
+<body>
+<h1>收支明细</h1>
+<table border="2" class="t1">
+
+<tr>
+<th>编号</th>
+<th style="width:300px">内容</th>
+<th>使用人</th>
+<th>金额(元)</th>
+<th>类型(收入/支出)</th>
+<th>时间</th></tr>
+
+
+	   <?php $c=-1; foreach($data['value'] as $count):
+	   $c++; 
+        ?>
+ 		<tr class="a<?=($c%2+1)?>">
+		<td><?=$count['Id']?></td>
+		<td><?=$count['content']?></td>
+		<td><?=$count['who']?></td>
+		<td>￥<?=$count['money']?></td>
+		<td><?=$count['type']?></td>
+		<td><?=$count['datatime']?></td>
+		</tr>		
+       <?php  endforeach ?>
+
+
+</table>
+
+<table border="2" class="t1">
+
+<tr><th style="width:70px">总<?=$data['sum'][0]['type']?></th>
+<th style="width:70px">总<?=$data['sum'][1]['type']?></th>
+<th style="width:70px">剩余资金</th>
+</tr>
+
+
+
+ 		<tr class="a1">
+		<td>￥<?=$data['sum'][0]['sum']?></td>
+		<td>￥<?=$data['sum'][1]['sum']?></td>
+		<td>￥<?=abs($data['sum'][0]['sum']-$data['sum'][1]['sum'])?></td>
+		</tr>	
+
+</table>
+
+
+<?php
+if(uid()==21){
+?>
+<div class="center" >
+<form action="?c=plugin&a=money_add" method="post">
+内容：<input type="text" name="content"/>
+使用人：<input type="text" name="who"/>
+金额：<input type="text" name="money"/></br>
+类型：
+<select name="type">
+<option value="支出">支出</option>
+<option value="收入">收入</option>
+</select>
+
+时间： <input type="date" name="datatime"/></br>
+<input class="btn btn-info" type="submit" value="确定"/>
+</form>
+</div>
+
+<form action="?c=plugin&a=money_delete" method="post">
+编号：<input type="text" name="id"/></br>
+<input class="btn btn-info" type="submit" value="确定删除"/>
+</form>
+<?php
+}
+?>
+</body>
+
+</html>

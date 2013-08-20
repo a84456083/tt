@@ -1,0 +1,20 @@
+<form action="?c=plugin&a=board_todo_import_save" method="POST" onsubmit="return board_todo_import(<?php echo intval(v('board_id'))?>,<?php echo intval(v('list_id'))?>)" id="board_todo_import_form">
+	<select size="10" onchange="board_get_todos_by_uid(this.value)"  name="user">
+		<?php foreach($users as $key=>$user):?>
+		<option value="<?php echo $user['id']?>" <?php if(0==$key) echo 'selected="selected"';?>><?php echo $user['name']?></option>
+		<?php endforeach;?>
+	</select>
+	<select size="10" multiple="true"  id="import_todos" name="todos[]">
+		<?php
+	if(!empty($todos)):
+	   	foreach($todos as $todo):?>
+		<option value="<?php echo $todo['id']?>"><?php echo $todo['content']?></option>
+		<?php endforeach;
+	endif;   
+		?>
+	</select>
+	<br>
+	<input type="hidden" name="board_id" value="<?php echo intval(v('board_id'))?>" />
+	<input type="hidden" name="list_id" value="<?php echo intval(v('list_id'))?>" />
+	<input type="SUBMIT" class="btn" value="添加" />
+</form>

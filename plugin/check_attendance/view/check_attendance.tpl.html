@@ -1,0 +1,340 @@
+
+    <link id="uiThemes" rel="stylesheet" type="text/css" media="screen" href="plugin/check_attendance/css/jquery-ui-custom.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="plugin/check_attendance/css/ui.jqgrid.css" />
+    <!-- 引入jQuery -->
+    <script type="text/javascript" src="plugin/check_attendance/js/jquery.min.js"></script>
+    <script src="plugin/check_attendance/js/jquery-ui-1.7.2.custom.min.js" type="text/javascript"></script>
+    <script src="plugin/check_attendance/js/grid.locale-zh_CN.js" type="text/javascript"></script>
+    <script src="plugin/check_attendance/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+    <script src="plugin/check_attendance/js/grid.locale-en.js" type="text/javascript"></script>   
+	<script src="plugin/check_attendance/js/jquery.json-2.4.min.js" type="text/javascript"></script>  
+	
+   <script type="text/javascript">   
+	    jQuery.jgrid.useJSON = true;   
+	</script>   
+	
+	<?php                                                                             //根据uid权限限制
+	if(uid()==6){                                                           //雷静： 6    我：21   第一个为雷静  第2个为测试阶段使用  
+	if($_GET['query']==1)
+	$edit="false";
+	else
+	$edit="true";
+	}
+	else 
+	$edit="false";
+	
+	if($edit=="true") {$left=-150;$timeleft=0;}
+	else {$left=-150;$timeleft=210;}
+	
+	?>
+	
+	
+	<style>
+	#gridPager{height:35px;}
+	#gbox_gridTable{margin-left:<?=$left?>px;margin-top:20px;,min-width:1000px}
+	#bar{margin-left:370px;margin-bottom:20px}
+	#title{font-size:30px;}
+	#votation{margin-left:100px;font-size:15px;}
+	#explain{margin-left:0px;font-size:15px; font-weight:bold;margin-bottom:-15px}
+	#buttons{margin-left:120px;}
+	#time{margin-left:<?=$timeleft?>px;}
+	#button{margin-left:100px;}
+	strong{font-size:16px;}
+	#gbox_gridTable{margin-bottom:-30px}
+	
+
+    table{
+	font-size:13px;
+    empty-cells:show; 
+    border-collapse: collapse;
+    margin:0 auto;
+    }
+    td{
+    height:25px;
+    }
+	
+	
+	
+	.title { background: #FFF; border: 1px solid #9DB3C5; padding: 0px; width:100%; }
+    .title th, .title td { border: 1px solid #CAD9EA; padding: 0px; font-size:13px;}
+
+
+table.t1{
+    border:1px solid #cad9ea;
+    color:#666;
+}
+
+
+table.t1 th {
+    background-image: url(th_bg1.gif);
+    background-repeat::repeat-x;
+    height:30px;
+}
+table.t1 td,table.t1 th{
+    border:1px solid #cad9ea;
+    padding:0 1em 0;
+}
+.a1{
+    background-color:#f5fafe;
+}
+.a2{
+    background-color:#FFFAF0;
+}
+
+th{
+    background-color:#FFFFF0;
+}
+#myModal{width:750px}
+
+.t1 tr:hover{
+background-color:#EDEDED;
+}
+
+
+footer{display:none;}
+	</style>
+	
+
+
+	<script type="text/javascript">
+	$(function()
+    {   var complete=false;
+        var grid=$("#gridTable").jqGrid({	        
+		        url:'?c=plugin&a=data_attendance&time_code='+<?=$data['time_code']?>,   
+                 //url:WEB_PATH+'/excludes/post.jsp',    
+				editurl:'?c=plugin&a=attendance_edit&time_code='+<?=$data['time_code']?>,
+                datatype: 'json',
+                mtype: 'POST',
+                height: 350,
+				cellEdit:<?=$edit?>,
+				cellsubmit:'clientArray',
+                colNames:['id','time_code','员工代码','姓名', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17'
+				           , '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31','年假','病假','事假','旷工','迟到','早退','其他','请假(考核周期内)'],
+                colModel:[
+				        {name:'id',index:'id', width:70, editable: <?=$edit?>, hidden:true},
+						{name:'time_code',index:'time_code', width:70, editable: <?=$edit?>, hidden:true},
+                        {name:'eid',index:'eid', width:70},
+                        {name:'name',index:'name', width:80,editable: <?=$edit?>},
+                        {name:'d1',index:'d1', width:30, editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d2',index:'d2', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d3',index:'d3', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d4',index:'d4', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d5',index:'d5', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d6',index:'d6', width:30, editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d7',index:'d7', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d8',index:'d8', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d9',index:'d9', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d10',index:'d10', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d11',index:'d11', width:30, editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d12',index:'d12', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d13',index:'d13', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d14',index:'d14', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d15',index:'d15', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d16',index:'d16', width:30, editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d17',index:'d17', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d18',index:'d18', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d19',index:'d19', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d20',index:'d20', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d21',index:'d21', width:30, editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d22',index:'d22', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d23',index:'d23', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d24',index:'d24', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d25',index:'d25', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d26',index:'d26', width:30, editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d27',index:'d27', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d28',index:'d28', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d29',index:'d29', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+                        {name:'d30',index:'d30', width:30,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+						{name:'d31',index:'d31', width:40,editable:<?=$edit?>,edittype:'select',editoptions:{value:{1:'',2:'-',3:'S',4:'B',5:'D',6:'W',7:'CD',8:'SJ',9:'H',10:'J',11:'WD',12:'BX',13:'K'}}},
+						{name:'D',index:'D', width:50,editable:false,hidden:true},
+						{name:'B',index:'B', width:50,editable:false,hidden:true},
+						{name:'S',index:'S', width:50,editable:false,hidden:true},
+						{name:'K',index:'K', width:50,editable:false,hidden:true},                                     
+						{name:'CD',index:'CD', width:50,editable:false,hidden:true},
+						{name:'T',index:'T', width:50,editable:false,hidden:true},                                     //早退暂无
+						{name:'O',index:'O', width:50,editable:false,hidden:true},
+						{name:'TO',index:'TO', width:150,editable:false,hidden:true},
+                ],
+
+                sortname:'eid',
+                sortorder:'asc',
+                viewrecords:true,
+                rowNum:50,
+                rowList:[50],
+                pager:"#gridPager",
+                caption: "考勤表",
+				
+				jsonReader: {     
+                root: "dataRows",   
+                repeatitems : false,
+                
+	            }, 
+        }).navGrid('#gridPager',{edit:<?=$edit?>,add:false,del:false,search:false}); 
+        });		
+	</script>
+	
+	     <!--<input id="token" type="hidden" value=<?=$_SESSION['token']?>   /> -->
+	     <div id='bar'> 
+		 <span id='title'><?=$data['time_code']?>---考勤表</span>
+		 </div>
+		
+		 
+         <div>
+		 <strong id='time'>时间:</strong>
+		 <select id="sel">
+         <?php
+         if($edit=='true') $i=1;
+		 else $i=1;
+         for(;$i<count($data['time'] );$i++){
+         ?>
+         <option value="<?php echo $data['time'][$i]['time_code'];?>"<?php if($data['time'][$i]['time_code']==$data['time_code']){echo 'selected';}?> ><?php echo $data['time'][$i]['time_code'];?></option>
+
+         <?php
+         }
+         ?>
+         </select>
+		 
+		 
+
+		 
+		 <span id="buttons">
+	     <button id="built" class="fm-button ui-state-default ui-corner-all ui-state-hover">导出</button>
+		 <button id="query" class="fm-button ui-state-default ui-corner-all ui-state-hover">查询</button>
+		 <button id="create" class="fm-button ui-state-default ui-corner-all ui-state-hover">初始化</button>
+		 <!-- <button id="change"  class="fm-button ui-state-default ui-corner-all ui-state-hover">转换</button> -->
+	     </span>
+		 
+		 
+		 <span id="button">
+		<a class="fm-button ui-state-default ui-corner-all ui-state-hover" href="#myModal"  data-toggle="modal" >查询请假统计结果</a>
+		 </span>
+		 
+		 <span id="votation">
+		 <strong>正常假期:</strong>
+		 <input type='text' maxlength="2"   style="width:44px;height:30px;"  id='day'/>
+		 <button id="submit" class="fm-button ui-state-default ui-corner-all ui-state-hover">确定</button>
+		 </span>
+		 </div>
+		 
+		 <div id="explain">考勤符号:&nbsp; &nbsp; 病假 B&nbsp; &nbsp; &nbsp;   事假 S &nbsp; &nbsp; &nbsp;  年假 D&nbsp; &nbsp; &nbsp;
+		 外勤 W&nbsp; &nbsp; &nbsp;   迟到 CD&nbsp; &nbsp; &nbsp;   婚假 H &nbsp; &nbsp; &nbsp;  计划生育假 J&nbsp; &nbsp; &nbsp;   丧假 SJ&nbsp; &nbsp; &nbsp;   正常假期 -
+		 &nbsp; &nbsp;未带卡 WD&nbsp; &nbsp; &nbsp;   <span style="margin-left:80px">旷工 K&nbsp; &nbsp; &nbsp;    补休 BX</span>
+		 </div>
+
+
+         <table id="gridTable"></table>
+         <div id="gridPager"></div>
+		
+
+		
+		<!-- 统计结果显示框 -->
+		<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">  
+	    <div class="modal-header">  
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> 
+	    <h3 id="myModalLabel"><?=$data['time_code']?>---请假统计结果</h3>  </div>  <div class="modal-body">   
+	    <p>
+		<table border="1" class="t1">
+		
+		<tr class="title">
+		<th width="40px">姓名</th>
+		<th>年假(天)</th>
+		<th>病假(天)</th>
+		<th>事假(天)</th>
+		<th>旷工(天)</th>
+		<th>迟到(次)</th>
+		<th>早退(次)</th>
+		<th>其它(天)</th>
+		<th width="90px">考核期内请假(天)</th>
+		</tr>
+		
+
+
+	   <?php $c=-1; foreach($countData as $count):
+	   $c++; 
+	   if($c%2==0){?>
+ 		<tr class="a<?=($c%4/2+1)?>">
+		<td>
+		<?php 
+		echo explode('(',$count['name'])[0];
+		?>
+		</td>
+		<td><?=$count['D']?></td>
+		<td><?=$count['B']?></td>
+		<td><?=$count['S']?></td>
+		<td><?=$count['K']?></td>
+		<td><?=$count['CD']?></td>
+		<td>0</td>
+		<td><?=$count['O']?></td>
+		<td><?=$count['TO']?></td>
+		</tr>		
+       <?php } endforeach ?>
+		</table>
+
+		</p> 
+		</div> 
+		<div class="modal-footer">   
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>   
+	    </div>
+	    </div>
+		
+		
+ 
+   <script type="text/javascript">     
+                                                                                        //点击,状态变换监听器
+																						
+
+																						
+         if(!<?=$edit?>){
+		 $('#buttons').css('display','none');
+		 $('#votation').css('display','none');
+		 }
+		 else{
+		 $('#button').css('display','none');
+		 }
+		 
+   
+	    $('#built').click(function(){
+		htmlobj=$.ajax({url:"?c=plugin&a=attendance_out&time_code="+<?=$data['time_code']?>,async:false});
+        alert(htmlobj.responseText);
+		window.open(<?=$data['time_code']?>+"考勤统计表.xlsx");
+		});
+		
+	    $('#submit').click(function(){
+		if($('#day').val()>=1&&$('#day').val()<=31){
+		htmlobj=$.ajax({url:"?c=plugin&a=change_vacation&time_code="+<?=$data['time_code']?>+"&day="+$('#day').val(),async:false});
+        alert(htmlobj.responseText);
+		window.top.location.reload();
+		}
+		else alert('请输入1~31数字');
+		});
+		
+		$('#query').click(function(){
+		window.location.href="?c=plugin&a=check_attendance&query=1&time_code="+<?=$data['time_code']?>;
+		});
+		
+		$('#sel').change(function(){
+		window.location.href="?c=plugin&a=check_attendance&time_code="+$("#sel option:selected").val()+"&query="+ <?php if(isset($_GET['query'])) echo $_GET['query']; else echo 0; ?>;
+		}
+		);
+		
+		$('#create').click(function(){
+		htmlobj=$.ajax({url:"?c=plugin&a=attendance_create&time_code="+<?=$data['time_code']?>,async:false});
+        alert(htmlobj.responseText);
+		window.top.location.reload();
+		});
+		
+		
+		
+	    $('#change').click(function(){
+		if (confirm("是否确认转换，转换后只存在原始类型"))  {  
+		htmlobj=$.ajax({url:"?c=plugin&a=change_new",async:false});
+        alert(htmlobj.responseText);
+		window.top.location.reload();
+         }  else  { 
+     
+        };
+		});
+	</script>   
+	
+
+
